@@ -29,7 +29,7 @@ public class SecurityConfig {
 						.requestMatchers(HttpMethod.GET, "/api/v1/beans/duplicates", "/api/v1/notes/me")
 						.authenticated()
 						.requestMatchers(HttpMethod.GET, "/api/v1/flavors", "/api/v1/beans", "/api/v1/beans/*",
-								"/api/v1/roasteries", "/api/v1/notes/*").permitAll()
+								"/api/v1/beans/*/similar", "/api/v1/roasteries", "/api/v1/notes/*").permitAll()
 						.requestMatchers("/actuator/health", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html",
 								"/error").permitAll()
 						.requestMatchers("/api/v1/admin/**").hasRole("ADMIN")

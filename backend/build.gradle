@@ -40,5 +40,19 @@ dependencies {
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+	useJUnitPlatform {
+		// 성능 측정은 데이터를 많이 만들고 오래 걸려서 따로 실행한다: ./gradlew perfTest
+		excludeTags 'perf'
+	}
+}
+
+tasks.register('perfTest', Test) {
+	description = '추천 API 응답 시간 측정 (원두 1,000개 · 사용자 1,000명). 결과: reports/recommendation-perf.md'
+	group = 'verification'
+	testClassesDirs = sourceSets.test.output.classesDirs
+	classpath = sourceSets.test.runtimeClasspath
+	useJUnitPlatform {
+		includeTags 'perf'
+	}
+	outputs.upToDateWhen { false }
 }

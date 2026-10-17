@@ -10,6 +10,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +35,7 @@ import com.beanote.global.error.BusinessException;
 import com.beanote.global.error.ErrorCode;
 import com.beanote.global.response.CursorPage;
 import com.beanote.roastery.domain.Roastery;
+import com.beanote.taste.event.TasteInputChangedEvent;
 import com.beanote.roastery.repository.RoasteryRepository;
 
 @Service
@@ -45,15 +47,17 @@ public class BeanService {
 	private final RoasteryRepository roasteryRepository;
 	private final FlavorService flavorService;
 	private final FlavorNormalizationService normalizationService;
+	private final ApplicationEventPublisher events;
 
 	public BeanService(BeanRepository beanRepository, BeanStatsRepository beanStatsRepository,
 			RoasteryRepository roasteryRepository, FlavorService flavorService,
-			FlavorNormalizationService normalizationService) {
+			FlavorNormalizationService normalizationService, ApplicationEventPublisher events) {
 		this.beanRepository = beanRepository;
 		this.beanStatsRepository = beanStatsRepository;
 		this.roasteryRepository = roasteryRepository;
 		this.flavorService = flavorService;
 		this.normalizationService = normalizationService;
+		this.events = events;
 	}
 
 	public CursorPage<BeanSummaryResponse> search(BeanSearchCondition condition) {
@@ -81,6 +85,21 @@ public class BeanService {
 		return new CursorPage<>(
 				page.stream().map(bean -> BeanSummaryResponse.from(bean, stats.get(bean.getId()))).toList(),
 				nextCursor);
+	}
+
+	/**
+	 * 주어진 순서대로 원두 요약을 만든다 (추천·비슷한 원두 목록용). 없는 id 는 건너뛴다.
+	 */
+	public List<BeanSummaryResponse> summaries(List<Long> ids) {
+		Map<Long, Bean> beans = beanRepository.findAllById(ids).stream()
+				.collect(Collectors.toMap(Bean::getId, Function.identity()));
+		List<Bean> ordered = ids.stream().map(beans::get).filter(Objects::nonNull).toList();
+		Map<Long, BeanStats> stats = statsOf(ordered);
+		return ordered.stream().map(bean -> BeanSummaryResponse.from(bean, stats.get(bean.getId()))).toList();
+	}
+
+	public boolean isListed(Long id) {
+		return beanRepository.findDetailById(id).isPresent();
 	}
 
 	public BeanDetailResponse getDetail(Long id) {
@@ -130,6 +149,7 @@ public class BeanService {
 				request.roastedOn(), officialText, officialFlavors);
 		Long beanId = beanRepository.save(bean).getId();
 		logs.forEach(log -> log.attachTo(beanId));
+		events.publishEvent(TasteInputChangedEvent.ofBean(beanId));
 		return beanId;
 	}
 

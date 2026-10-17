@@ -3,12 +3,12 @@ package com.beanote.note.service;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
 
 import com.beanote.flavor.matching.FlavorMatcher;
+import com.beanote.global.config.ClockConfig;
 import com.beanote.global.error.BusinessException;
 import com.beanote.global.error.ErrorCode;
 import com.beanote.note.dto.NoteDtos.NoteRequest;
@@ -25,8 +25,6 @@ public class NoteValidator {
 	private static final BigDecimal MIN_RATING = new BigDecimal("0.5");
 	private static final BigDecimal MAX_RATING = new BigDecimal("5.0");
 	private static final BigDecimal TWO = BigDecimal.valueOf(2);
-	// 사용자는 한국 기준 날짜로 입력한다. 시차를 고려해 하루 뒤까지 허용한다
-	private static final ZoneId SERVICE_ZONE = ZoneId.of("Asia/Seoul");
 
 	private final Clock clock;
 
@@ -48,7 +46,8 @@ public class NoteValidator {
 	}
 
 	public void validateTastedOn(LocalDate tastedOn) {
-		if (tastedOn.isAfter(LocalDate.now(clock.withZone(SERVICE_ZONE)).plusDays(1))) {
+		// 사용자는 한국 기준 날짜로 입력한다. 시차를 고려해 하루 뒤까지 허용한다
+		if (tastedOn.isAfter(LocalDate.now(clock.withZone(ClockConfig.SERVICE_ZONE)).plusDays(1))) {
 			throw new BusinessException(ErrorCode.INVALID_INPUT, "마신 날짜는 미래일 수 없습니다.");
 		}
 	}

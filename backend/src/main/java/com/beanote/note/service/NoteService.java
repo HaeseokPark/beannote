@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ import com.beanote.note.dto.NoteDtos.NoteRequest;
 import com.beanote.note.dto.NoteDtos.NoteSummaryResponse;
 import com.beanote.note.repository.NoteSpecifications;
 import com.beanote.note.repository.TastingNoteRepository;
+import com.beanote.taste.event.TasteInputChangedEvent;
 import com.beanote.user.domain.User;
 import com.beanote.user.repository.UserRepository;
 
@@ -47,10 +49,12 @@ public class NoteService {
 	private final NoteValidator validator;
 	private final FlavorService flavorService;
 	private final FlavorNormalizationService normalizationService;
+	private final ApplicationEventPublisher events;
 
 	public NoteService(TastingNoteRepository noteRepository, BeanRepository beanRepository,
 			BeanStatsRepository beanStatsRepository, UserRepository userRepository, NoteValidator validator,
-			FlavorService flavorService, FlavorNormalizationService normalizationService) {
+			FlavorService flavorService, FlavorNormalizationService normalizationService,
+			ApplicationEventPublisher events) {
 		this.noteRepository = noteRepository;
 		this.beanRepository = beanRepository;
 		this.beanStatsRepository = beanStatsRepository;
@@ -58,6 +62,7 @@ public class NoteService {
 		this.validator = validator;
 		this.flavorService = flavorService;
 		this.normalizationService = normalizationService;
+		this.events = events;
 	}
 
 	public Long create(Long userId, NoteRequest request) {
@@ -69,7 +74,9 @@ public class NoteService {
 		noteRepository.save(note);
 		logs.forEach(log -> log.attachTo(note.getId()));
 
-		beanStatsRepository.recalculate(note.getBean().getId());
+		Long beanId = note.getBean().getId();
+		beanStatsRepository.recalculate(beanId);
+		events.publishEvent(new TasteInputChangedEvent(userId, Set.of(beanId)));
 		return note.getId();
 	}
 
@@ -86,10 +93,12 @@ public class NoteService {
 		Long previousBeanId = note.getBean().getId();
 		applyRequest(note, request).forEach(log -> log.attachTo(noteId));
 
-		beanStatsRepository.recalculate(note.getBean().getId());
-		if (!previousBeanId.equals(note.getBean().getId())) {
+		Long beanId = note.getBean().getId();
+		beanStatsRepository.recalculate(beanId);
+		if (!previousBeanId.equals(beanId)) {
 			beanStatsRepository.recalculate(previousBeanId);
 		}
+		events.publishEvent(new TasteInputChangedEvent(userId, Set.copyOf(List.of(beanId, previousBeanId))));
 	}
 
 	public void delete(Long userId, Long noteId) {
@@ -98,6 +107,7 @@ public class NoteService {
 		noteRepository.delete(note);
 
 		beanStatsRepository.recalculate(beanId);
+		events.publishEvent(new TasteInputChangedEvent(userId, Set.of(beanId)));
 	}
 
 	@Transactional(readOnly = true)

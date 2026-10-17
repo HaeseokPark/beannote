@@ -38,6 +38,43 @@ beanote:
     # 향미 표현 판정 기준 점수 (4-6 F-3)
     auto-threshold: 85
     review-threshold: 70
+  # 취향·추천 계산 (기획서 5장). 코드에 숫자를 직접 쓰지 않는다
+  recommendation:
+    prior-k: 5                # 원두 벡터: w = n / (n + K)
+    decay-per-week: 0.97      # 노트 영향 주 단위 3% 감쇠
+    survey-min-notes: 3       # 노트 3개 미만 → 설문 벡터
+    stable-notes: 10          # 노트 10개 이상 → 노트 벡터만 (취향 "안정")
+    section-weights:          # 유사도 계산 때 구간 가중치
+      taste: 1.0
+      flavor: 0.6
+      process: 0.4
+      roast: 0.8
+    score-weights:            # score = α·contentSim + β·collab + γ·explore − 싫어하는 향 비율 × penalty
+      content: 0.65
+      collab: 0.25
+      explore: 0.10
+      dislike-penalty: 0.3
+    collab-min-users: 50      # 사용자 50명 미만이면 협업 점수(β) 사용 안 함
+    cache-ttl: 30m
+    size: 10                  # 추천 개수
+    similar-size: 5           # 비슷한 원두 개수
+    roast-taste:              # 기본 맛 축 추정표: 산미, 단맛, 바디, 쓴맛, 여운 (1~5)
+      LIGHT: [4.5, 3.0, 2.0, 1.5, 3.0]
+      MEDIUM_LIGHT: [4.0, 3.5, 2.5, 2.0, 3.0]
+      MEDIUM: [3.0, 3.5, 3.0, 3.0, 3.5]
+      MEDIUM_DARK: [2.0, 3.0, 4.0, 4.0, 3.5]
+      DARK: [1.5, 2.5, 4.5, 4.5, 4.0]
+    process-taste-adjust:     # 가공 방식별 보정
+      WASHED: [0.5, 0.0, -0.5, 0.0, 0.0]
+      NATURAL: [-0.5, 0.5, 0.5, 0.0, 0.5]
+      HONEY: [0.0, 0.5, 0.0, 0.0, 0.0]
+      ANAEROBIC: [0.0, 0.5, 0.0, 0.0, 0.5]
+      OTHER: [0.0, 0.0, 0.0, 0.0, 0.0]
+    habit-roast:              # 설문 O-1 평소 커피 → 추정 선호 로스팅
+      POUR_OVER: MEDIUM_LIGHT
+      AMERICANO: MEDIUM
+      LATTE: MEDIUM_DARK
+      ESPRESSO: MEDIUM_DARK
 
 management:
   endpoints:

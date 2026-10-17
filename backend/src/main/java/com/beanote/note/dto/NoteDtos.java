@@ -6,7 +6,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.beanote.bean.domain.Bean;
+import com.beanote.flavor.domain.MappingResult;
 import com.beanote.flavor.dto.FlavorDtos.FlavorLabel;
+import com.beanote.flavor.dto.NormalizeDtos.MatchResponse;
 import com.beanote.flavor.service.FlavorService;
 import com.beanote.note.domain.BrewMethod;
 import com.beanote.note.domain.BrewRecipe;
@@ -98,7 +100,7 @@ public final class NoteDtos {
 
 	public record NoteDetailResponse(Long id, Author author, boolean mine, BeanRef bean, LocalDate tastedOn,
 			BrewMethod brewMethod, BrewRecipe recipe, TasteScores scores, BigDecimal rating,
-			List<FlavorLabel> flavors, List<String> freeFlavors, Boolean wouldBuyAgain, String memo,
+			List<FlavorLabel> flavors, List<MatchResponse> freeFlavors, Boolean wouldBuyAgain, String memo,
 			Visibility visibility, String photoUrl, Instant createdAt, Instant updatedAt) {
 
 		public static NoteDetailResponse from(TastingNote note, Long viewerId) {
@@ -106,7 +108,7 @@ public final class NoteDtos {
 					new Author(note.getUser().getId(), note.getUser().getNickname()),
 					viewerId != null && note.isOwnedBy(viewerId), BeanRef.from(note.getBean()), note.getTastedOn(),
 					note.getBrewMethod(), note.getRecipe(), note.getScores(), note.getRating(), flavorsOf(note),
-					List.copyOf(note.getFreeFlavors()), note.getWouldBuyAgain(), note.getMemo(),
+					freeFlavorsOf(note), note.getWouldBuyAgain(), note.getMemo(),
 					note.getVisibility(), note.getPhotoUrl(), note.getCreatedAt(), note.getUpdatedAt());
 		}
 
@@ -125,6 +127,15 @@ public final class NoteDtos {
 			size = size <= 0 ? DEFAULT_SIZE : Math.min(size, MAX_SIZE);
 		}
 
+	}
+
+	/** 향미 자유 입력과 그 표준화 결과 (EXACT·AUTO 면 확정 태그, REVIEW 면 제안) */
+	private static List<MatchResponse> freeFlavorsOf(TastingNote note) {
+		return note.getFreeFlavors().stream()
+				.map(free -> free.getMappingLog() == null
+						? new MatchResponse(free.getRawText(), free.getRawText(), MappingResult.UNMAPPED, 0, null, null)
+						: MatchResponse.from(free.getMappingLog()))
+				.toList();
 	}
 
 	private static List<FlavorLabel> flavorsOf(TastingNote note) {

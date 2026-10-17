@@ -13,11 +13,15 @@ import org.springframework.transaction.annotation.Transactional;
 import com.beanote.bean.domain.Bean;
 import com.beanote.bean.repository.BeanRepository;
 import com.beanote.bean.repository.BeanStatsRepository;
+import com.beanote.flavor.domain.FlavorMappingLog;
 import com.beanote.flavor.domain.FlavorTag;
+import com.beanote.flavor.domain.MappingSource;
+import com.beanote.flavor.service.FlavorNormalizationService;
 import com.beanote.flavor.service.FlavorService;
 import com.beanote.global.error.BusinessException;
 import com.beanote.global.error.ErrorCode;
 import com.beanote.global.response.CursorPage;
+import com.beanote.note.domain.FreeFlavor;
 import com.beanote.note.domain.TastingNote;
 import com.beanote.note.dto.NoteDtos.MyNoteCondition;
 import com.beanote.note.dto.NoteDtos.NoteDetailResponse;
@@ -42,16 +46,18 @@ public class NoteService {
 	private final UserRepository userRepository;
 	private final NoteValidator validator;
 	private final FlavorService flavorService;
+	private final FlavorNormalizationService normalizationService;
 
 	public NoteService(TastingNoteRepository noteRepository, BeanRepository beanRepository,
 			BeanStatsRepository beanStatsRepository, UserRepository userRepository, NoteValidator validator,
-			FlavorService flavorService) {
+			FlavorService flavorService, FlavorNormalizationService normalizationService) {
 		this.noteRepository = noteRepository;
 		this.beanRepository = beanRepository;
 		this.beanStatsRepository = beanStatsRepository;
 		this.userRepository = userRepository;
 		this.validator = validator;
 		this.flavorService = flavorService;
+		this.normalizationService = normalizationService;
 	}
 
 	public Long create(Long userId, NoteRequest request) {
@@ -59,8 +65,9 @@ public class NoteService {
 				.filter(u -> !u.isDeleted())
 				.orElseThrow(() -> new BusinessException(ErrorCode.UNAUTHORIZED));
 		TastingNote note = new TastingNote(user, null);
-		applyRequest(note, request);
+		List<FlavorMappingLog> logs = applyRequest(note, request);
 		noteRepository.save(note);
+		logs.forEach(log -> log.attachTo(note.getId()));
 
 		beanStatsRepository.recalculate(note.getBean().getId());
 		return note.getId();
@@ -77,7 +84,7 @@ public class NoteService {
 	public void update(Long userId, Long noteId, NoteRequest request) {
 		TastingNote note = findOwned(userId, noteId);
 		Long previousBeanId = note.getBean().getId();
-		applyRequest(note, request);
+		applyRequest(note, request).forEach(log -> log.attachTo(noteId));
 
 		beanStatsRepository.recalculate(note.getBean().getId());
 		if (!previousBeanId.equals(note.getBean().getId())) {
@@ -121,17 +128,24 @@ public class NoteService {
 				.orElseThrow(() -> new BusinessException(ErrorCode.NOTE_NOT_FOUND));
 	}
 
-	private void applyRequest(TastingNote note, NoteRequest request) {
+	/**
+	 * 요청 값을 노트에 반영한다. 향미 자유 입력은 표준화 기록(mapping log)을 남기고, 그 기록을 돌려준다.
+	 */
+	private List<FlavorMappingLog> applyRequest(TastingNote note, NoteRequest request) {
 		validator.validate(request);
 		Bean bean = beanRepository.findDetailById(request.beanId())
 				.orElseThrow(() -> new BusinessException(ErrorCode.BEAN_NOT_FOUND));
 		Set<FlavorTag> flavors = flavorService.resolveTags(request.flavorTagIds());
-		List<String> freeFlavors = validator.normalizeFreeFlavors(request.freeFlavors());
+		List<FlavorMappingLog> logs = validator.normalizeFreeFlavors(request.freeFlavors()).stream()
+				.map(text -> normalizationService.record(text, MappingSource.NOTE))
+				.toList();
+		List<FreeFlavor> freeFlavors = logs.stream().map(log -> new FreeFlavor(log.getRawText(), log)).toList();
 
 		note.apply(bean, request.tastedOn(), request.brewMethod(),
 				request.recipe() == null ? null : request.recipe().toRecipe(),
 				request.scores().toScores(), request.rating(), request.wouldBuyAgain(),
 				request.memo() == null ? null : request.memo().strip(), request.visibility(), flavors, freeFlavors);
+		return logs;
 	}
 
 }

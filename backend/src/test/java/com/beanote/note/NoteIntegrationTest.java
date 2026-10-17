@@ -58,7 +58,9 @@ class NoteIntegrationTest {
 		body.extractingPath("$.data.scores.acidity").isEqualTo(5);
 		body.extractingPath("$.data.recipe.waterTempC").isEqualTo(92);
 		body.extractingPath("$.data.flavors").asArray().hasSize(2);
-		body.extractingPath("$.data.freeFlavors[0]").isEqualTo("살짝 자두 같은 느낌");
+		body.extractingPath("$.data.freeFlavors[0].raw").isEqualTo("살짝 자두 같은 느낌");
+		body.extractingPath("$.data.freeFlavors[0].result").isEqualTo("AUTO");
+		body.extractingPath("$.data.freeFlavors[0].tag.code").isEqualTo("PLUM");
 		body.extractingPath("$.data.visibility").isEqualTo("PRIVATE");
 		body.extractingPath("$.data.mine").isEqualTo(true);
 	}

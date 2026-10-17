@@ -34,6 +34,10 @@ beanote:
     login-limit:
       max-attempts: 10
       window: 5m
+  flavor:
+    # 향미 표현 판정 기준 점수 (4-6 F-3)
+    auto-threshold: 85
+    review-threshold: 70
 
 management:
   endpoints:

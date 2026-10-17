@@ -25,6 +25,10 @@ import com.beanote.bean.dto.BeanSearchCondition;
 import com.beanote.bean.repository.BeanRepository;
 import com.beanote.bean.repository.BeanSpecifications;
 import com.beanote.bean.repository.BeanStatsRepository;
+import com.beanote.flavor.domain.FlavorMappingLog;
+import com.beanote.flavor.domain.FlavorTag;
+import com.beanote.flavor.domain.MappingSource;
+import com.beanote.flavor.service.FlavorNormalizationService;
 import com.beanote.flavor.service.FlavorService;
 import com.beanote.global.error.BusinessException;
 import com.beanote.global.error.ErrorCode;
@@ -40,13 +44,16 @@ public class BeanService {
 	private final BeanStatsRepository beanStatsRepository;
 	private final RoasteryRepository roasteryRepository;
 	private final FlavorService flavorService;
+	private final FlavorNormalizationService normalizationService;
 
 	public BeanService(BeanRepository beanRepository, BeanStatsRepository beanStatsRepository,
-			RoasteryRepository roasteryRepository, FlavorService flavorService) {
+			RoasteryRepository roasteryRepository, FlavorService flavorService,
+			FlavorNormalizationService normalizationService) {
 		this.beanRepository = beanRepository;
 		this.beanStatsRepository = beanStatsRepository;
 		this.roasteryRepository = roasteryRepository;
 		this.flavorService = flavorService;
+		this.normalizationService = normalizationService;
 	}
 
 	public CursorPage<BeanSummaryResponse> search(BeanSearchCondition condition) {
@@ -111,12 +118,37 @@ public class BeanService {
 		Set<String> varieties = request.varieties() == null ? Set.of()
 				: request.varieties().stream().map(String::strip).collect(Collectors.toCollection(LinkedHashSet::new));
 
+		// 공식 향미 설명은 원문을 저장하고, 표준 태그로도 바꿔 둔다 (3-3)
+		String officialText = strip(request.officialFlavorText());
+		List<FlavorMappingLog> logs = officialText == null ? List.of()
+				: normalizationService.recordAll(officialText, MappingSource.BEAN);
+		Set<FlavorTag> officialFlavors = officialFlavors(flavorService.resolveTags(request.flavorTagIds()), logs);
+
 		Bean bean = Bean.registerByUser(userId, roastery, request.name().strip(), request.blend(),
 				request.originCountry() == null ? null : request.originCountry().name(), blendOrigins,
 				strip(request.region()), strip(request.farm()), varieties, request.process(), request.roastLevel(),
-				request.roastedOn(), strip(request.officialFlavorText()),
-				flavorService.resolveTags(request.flavorTagIds()));
-		return beanRepository.save(bean).getId();
+				request.roastedOn(), officialText, officialFlavors);
+		Long beanId = beanRepository.save(bean).getId();
+		logs.forEach(log -> log.attachTo(beanId));
+		return beanId;
+	}
+
+	/**
+	 * 사용자가 고른 태그를 먼저 두고, 공식 설명에서 확실하게(EXACT·AUTO) 찾은 태그를 최대 개수까지 더한다.
+	 */
+	private static Set<FlavorTag> officialFlavors(Set<FlavorTag> picked, List<FlavorMappingLog> logs) {
+		Set<FlavorTag> result = new LinkedHashSet<>(picked);
+		Set<Long> ids = picked.stream().map(FlavorTag::getId).collect(Collectors.toSet());
+		for (FlavorMappingLog log : logs) {
+			if (result.size() >= FlavorService.MAX_TAGS) {
+				break;
+			}
+			FlavorTag tag = log.getFlavorTag();
+			if (log.getResult().isConfident() && tag != null && ids.add(tag.getId())) {
+				result.add(tag);
+			}
+		}
+		return result;
 	}
 
 	private Optional<Roastery> findRoastery(Long roasteryId, String roasteryName) {

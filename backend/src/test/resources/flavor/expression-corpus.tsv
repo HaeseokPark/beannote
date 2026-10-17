@@ -1,0 +1,56 @@
+# 향미 표현 평가용 말뭉치. 기대값: TAG:<태그 코드> | CAT:<대분류 코드> | NONE (표준 태그로 확정하면 안 되는 표현)
+# 유형: variant(표기 변형) english(영문) typo(오타) phrase(문장 속 표현) category(대분류) unregistered(사전에 없는 표현)
+쟈스민	TAG:JASMINE	variant
+카라멜	TAG:CARAMEL	variant
+헤즐넛	TAG:HAZELNUT	variant
+다크 초콜렛	TAG:DARK_CHOCOLATE	variant
+밀크 쵸콜릿	TAG:MILK_CHOCOLATE	variant
+계피	TAG:CINNAMON	variant
+얼그레이	TAG:BERGAMOT	variant
+카시스	TAG:BLACKCURRANT	variant
+백향과	TAG:PASSION_FRUIT	variant
+감귤	TAG:TANGERINE	variant
+Jasmine	TAG:JASMINE	english
+Dark Chocolate	TAG:DARK_CHOCOLATE	english
+Brown Sugar	TAG:BROWN_SUGAR	english
+Earl Grey	TAG:BERGAMOT	english
+Stone Fruit	CAT:STONE_TROPICAL	english
+Red Wine	TAG:WINE	english
+Cacao Nibs	TAG:COCOA	english
+Black Tea	TAG:BLACK_TEA	english
+자스밍	TAG:JASMINE	typo
+블루베라	TAG:BLUEBERRY	typo
+라즈배리	TAG:RASPBERRY	typo
+캐러맬	TAG:CARAMEL	typo
+헤이즐럿	TAG:HAZELNUT	typo
+베르가뭇	TAG:BERGAMOT	typo
+jasmin	TAG:JASMINE	typo
+rasberry	TAG:RASPBERRY	typo
+carmel	TAG:CARAMEL	typo
+blackcurrent	TAG:BLACKCURRANT	typo
+은은한 자스민향	TAG:JASMINE	phrase
+살짝 자두 같은 느낌	TAG:PLUM	phrase
+잘 익은 복숭아	TAG:PEACH	phrase
+달콤한 꿀 향	TAG:HONEY	phrase
+진한 다크 초콜릿 느낌	TAG:DARK_CHOCOLATE	phrase
+상큼한 레몬 계열	TAG:LEMON	phrase
+구운 빵 같은	TAG:BAKED_BREAD	phrase
+고소한 땅콩맛	TAG:PEANUT	phrase
+블루베리 잼	TAG:BLUEBERRY	phrase
+와인 같은 산미	TAG:WINE	phrase
+플로럴	CAT:FLORAL	category
+베리류	CAT:BERRY	category
+시트러스한	CAT:CITRUS	category
+열대과일 느낌	CAT:STONE_TROPICAL	category
+고소함	CAT:NUTTY_COCOA	category
+스파이시	CAT:SPICE	category
+타이어	NONE	unregistered
+고무	NONE	unregistered
+깔끔함	NONE	unregistered
+밸런스	NONE	unregistered
+산뜻함	NONE	unregistered
+바디감	NONE	unregistered
+클린컵	NONE	unregistered
+리치한 바디	NONE	unregistered
+멜론	NONE	unregistered
+사과	NONE	unregistered

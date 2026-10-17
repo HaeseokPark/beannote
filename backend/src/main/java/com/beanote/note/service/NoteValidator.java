@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import com.beanote.flavor.matching.FlavorMatcher;
 import com.beanote.global.error.BusinessException;
 import com.beanote.global.error.ErrorCode;
 import com.beanote.note.dto.NoteDtos.NoteRequest;
@@ -56,7 +57,11 @@ public class NoteValidator {
 		if (freeFlavors == null) {
 			return List.of();
 		}
-		List<String> distinct = freeFlavors.stream().map(String::strip).distinct().toList();
+		// "자두, 꿀" 처럼 한 칸에 여러 표현을 쓰면 나눠서 각각 저장·표준화한다
+		List<String> distinct = freeFlavors.stream()
+				.flatMap(text -> FlavorMatcher.splitSegments(text).stream())
+				.distinct()
+				.toList();
 		if (distinct.size() > MAX_FREE_FLAVORS) {
 			throw new BusinessException(ErrorCode.INVALID_INPUT, "향미 자유 입력은 최대 5개까지 가능합니다.");
 		}

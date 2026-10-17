@@ -80,8 +80,7 @@ public class TastingNote extends BaseTimeEntity {
 
 	@ElementCollection
 	@CollectionTable(name = "tasting_note_free_flavors", joinColumns = @JoinColumn(name = "note_id"))
-	@Column(name = "raw_text")
-	private Set<String> freeFlavors = new LinkedHashSet<>();
+	private Set<FreeFlavor> freeFlavors = new LinkedHashSet<>();
 
 	protected TastingNote() {
 	}
@@ -96,7 +95,7 @@ public class TastingNote extends BaseTimeEntity {
 	 */
 	public void apply(Bean bean, LocalDate tastedOn, BrewMethod brewMethod, BrewRecipe recipe, TasteScores scores,
 			BigDecimal rating, Boolean wouldBuyAgain, String memo, Visibility visibility, Set<FlavorTag> flavors,
-			List<String> freeFlavors) {
+			List<FreeFlavor> freeFlavors) {
 		this.bean = bean;
 		this.tastedOn = tastedOn;
 		this.brewMethod = brewMethod;
@@ -172,7 +171,7 @@ public class TastingNote extends BaseTimeEntity {
 		return flavors;
 	}
 
-	public Set<String> getFreeFlavors() {
+	public Set<FreeFlavor> getFreeFlavors() {
 		return freeFlavors;
 	}
 

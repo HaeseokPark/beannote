@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    url: ${TEST_DB_URL:jdbc:mysql://localhost:3306/beanote_test?serverTimezone=UTC&characterEncoding=UTF-8}
+    username: ${TEST_DB_USERNAME:beanote}
+    password: ${TEST_DB_PASSWORD:beanote}
+  flyway:
+    # 테스트 DB는 매 실행마다 비우고 다시 만든다 (TestFlywayConfig)
+    clean-disabled: false

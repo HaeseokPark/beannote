@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: beanote
+  config:
+    # 로컬 비밀값은 backend/.env 에 둔다 (저장소에 커밋하지 않음, .env.example 참고)
+    import: optional:file:.env[.properties]
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/beanote?serverTimezone=UTC&characterEncoding=UTF-8}
+    username: ${DB_USERNAME:beanote}
+    password: ${DB_PASSWORD:beanote}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    locations: classpath:db/migration
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+
+logging:
+  pattern:
+    level: "%5p [%X{requestId:-}]"

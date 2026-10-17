@@ -3,6 +3,19 @@ spring:
     url: ${TEST_DB_URL:jdbc:mysql://localhost:3306/beanote_test?serverTimezone=UTC&characterEncoding=UTF-8}
     username: ${TEST_DB_USERNAME:beanote}
     password: ${TEST_DB_PASSWORD:beanote}
+  jpa:
+    properties:
+      hibernate:
+        generate_statistics: true
   flyway:
     # 테스트 DB는 매 실행마다 비우고 다시 만든다 (TestFlywayConfig)
     clean-disabled: false
+
+beanote:
+  jwt:
+    # 테스트 전용 값 (운영·개발에서 쓰지 않음)
+    secret: test-only-secret-key-for-beanote-integration-tests
+  auth:
+    login-limit:
+      # 테스트 컨텍스트가 공유되므로 한도를 크게 둔다. 제한 동작은 LoginAttemptLimiterTest 에서 검증
+      max-attempts: 10000

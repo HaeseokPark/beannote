@@ -3,7 +3,8 @@ spring:
     name: beanote
   config:
     # 로컬 비밀값은 backend/.env 에 둔다 (저장소에 커밋하지 않음, .env.example 참고)
-    import: optional:file:.env[.properties]
+    # 작업 디렉터리가 backend/ 이든 저장소 루트이든 읽히도록 두 경로를 모두 본다
+    import: optional:file:.env[.properties],optional:file:backend/.env[.properties]
   datasource:
     url: ${DB_URL:jdbc:mysql://localhost:3306/beanote?serverTimezone=UTC&characterEncoding=UTF-8}
     username: ${DB_USERNAME:beanote}
@@ -14,6 +15,7 @@ spring:
       ddl-auto: validate
     properties:
       hibernate:
+        default_batch_fetch_size: 100
         jdbc:
           time_zone: UTC
   flyway:
@@ -21,6 +23,17 @@ spring:
 
 server:
   port: 8080
+
+beanote:
+  jwt:
+    issuer: beanote
+    secret: ${JWT_SECRET:}
+    access-token-ttl: 30m
+    refresh-token-ttl: 14d
+  auth:
+    login-limit:
+      max-attempts: 10
+      window: 5m
 
 management:
   endpoints:

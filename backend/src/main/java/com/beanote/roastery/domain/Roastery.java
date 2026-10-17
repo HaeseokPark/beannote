@@ -37,6 +37,16 @@ public class Roastery {
 	protected Roastery() {
 	}
 
+	/**
+	 * 원두 등록 중 목록에 없는 로스터리(또는 카페)를 새로 만든다.
+	 */
+	public static Roastery create(String name) {
+		Roastery roastery = new Roastery();
+		roastery.name = name;
+		roastery.seed = false;
+		return roastery;
+	}
+
 	public Long getId() {
 		return id;
 	}

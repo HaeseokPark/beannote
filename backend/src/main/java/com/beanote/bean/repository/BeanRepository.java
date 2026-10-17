@@ -1,5 +1,6 @@
 package com.beanote.bean.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,5 +14,8 @@ public interface BeanRepository extends JpaRepository<Bean, Long>, JpaSpecificat
 
 	@Query("select b from Bean b join fetch b.roastery where b.id = :id and b.mergedIntoId is null")
 	Optional<Bean> findDetailById(@Param("id") Long id);
+
+	@Query("select b from Bean b join fetch b.roastery r where r.id = :roasteryId and b.mergedIntoId is null")
+	List<Bean> findAllByRoasteryId(@Param("roasteryId") Long roasteryId);
 
 }

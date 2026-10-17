@@ -25,8 +25,11 @@ public class SecurityConfig {
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers(HttpMethod.POST, "/api/v1/auth/signup", "/api/v1/auth/login",
 								"/api/v1/auth/refresh").permitAll()
+						// 아래 공개 GET 규칙보다 먼저 와야 하는 로그인 필요 경로
+						.requestMatchers(HttpMethod.GET, "/api/v1/beans/duplicates", "/api/v1/notes/me")
+						.authenticated()
 						.requestMatchers(HttpMethod.GET, "/api/v1/flavors", "/api/v1/beans", "/api/v1/beans/*",
-								"/api/v1/roasteries").permitAll()
+								"/api/v1/roasteries", "/api/v1/notes/*").permitAll()
 						.requestMatchers("/actuator/health", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html",
 								"/error").permitAll()
 						.requestMatchers("/api/v1/admin/**").hasRole("ADMIN")

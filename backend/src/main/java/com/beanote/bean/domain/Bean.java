@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.beanote.flavor.domain.FlavorTag;
 import com.beanote.global.entity.BaseTimeEntity;
+import com.beanote.global.util.TextNormalizer;
 import com.beanote.roastery.domain.Roastery;
 
 import jakarta.persistence.CollectionTable;
@@ -96,6 +97,34 @@ public class Bean extends BaseTimeEntity {
 	private Set<FlavorTag> officialFlavors = new LinkedHashSet<>();
 
 	protected Bean() {
+	}
+
+	/**
+	 * 사용자 등록 원두 (B-3). 관리자 승인(B-5, P1)이 생기기 전까지는 바로 ACTIVE 로 등록한다.
+	 */
+	public static Bean registerByUser(Long userId, Roastery roastery, String name, boolean blend,
+			String originCountry, Set<String> blendOrigins, String region, String farm, Set<String> varieties,
+			ProcessMethod process, RoastLevel roastLevel, LocalDate roastedOn, String officialFlavorText,
+			Set<FlavorTag> officialFlavors) {
+		Bean bean = new Bean();
+		bean.roastery = roastery;
+		bean.name = name;
+		bean.nameNormalized = TextNormalizer.normalize(name);
+		bean.blend = blend;
+		bean.originCountry = blend ? null : originCountry;
+		bean.blendOrigins.addAll(blend ? blendOrigins : Set.of());
+		bean.region = region;
+		bean.farm = farm;
+		bean.varieties.addAll(varieties);
+		bean.process = process;
+		bean.roastLevel = roastLevel;
+		bean.roastedOn = roastedOn;
+		bean.officialFlavorText = officialFlavorText;
+		bean.officialFlavors.addAll(officialFlavors);
+		bean.status = BeanStatus.ACTIVE;
+		bean.createdBy = userId;
+		bean.seed = false;
+		return bean;
 	}
 
 	public Long getId() {

@@ -21,7 +21,13 @@ public enum ErrorCode {
 	TOO_MANY_LOGIN_ATTEMPTS(HttpStatus.TOO_MANY_REQUESTS, "로그인 시도가 너무 많습니다. 잠시 후 다시 시도해 주세요."),
 
 	// 원두
-	BEAN_NOT_FOUND(HttpStatus.NOT_FOUND, "원두를 찾을 수 없습니다.");
+	BEAN_NOT_FOUND(HttpStatus.NOT_FOUND, "원두를 찾을 수 없습니다."),
+	BEAN_DUPLICATE_SUSPECTED(HttpStatus.CONFLICT, "비슷한 원두가 이미 있습니다. 확인 후 그래도 등록하려면 force=true 로 다시 요청하세요."),
+
+	// 노트
+	NOTE_NOT_FOUND(HttpStatus.NOT_FOUND, "노트를 찾을 수 없습니다."),
+	FLAVOR_TAG_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "향미 태그는 최대 5개까지 선택할 수 있습니다."),
+	RATING_OUT_OF_RANGE(HttpStatus.BAD_REQUEST, "별점은 0.5~5.0 사이에서 0.5 단위로 입력해 주세요.");
 
 	private final HttpStatus status;
 	private final String message;

@@ -1,8 +1,8 @@
 package com.beanote.bean.dto;
 
 /**
- * 원두 목록 정렬. 인기순·평점순은 원두 통계(bean_stats)가 생기는 Phase 2에서 추가한다.
+ * 원두 목록 정렬 (B-1). POPULAR = 노트 수, RATING = 평균 별점. 같으면 최신 원두가 먼저.
  */
 public enum BeanSort {
-	LATEST, NAME
+	LATEST, NAME, POPULAR, RATING
 }

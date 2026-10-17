@@ -1,0 +1,840 @@
+/* ============ 일러스트 ============ */
+
+.cup-art .steam {
+  stroke-dasharray: 60;
+  animation: steam 3.2s ease-in-out infinite;
+}
+
+.cup-art .s2 {
+  animation-delay: 0.6s;
+}
+
+.cup-art .s3 {
+  animation-delay: 1.2s;
+}
+
+@keyframes steam {
+  0% {
+    stroke-dashoffset: 60;
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  40% {
+    opacity: 0.8;
+  }
+
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+.empty-art {
+  width: 72px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--crema);
+  background: var(--crema-soft);
+}
+
+/* ============ 랜딩 ============ */
+
+.landing-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 28px 0 8px;
+  text-align: center;
+}
+
+.landing-title {
+  font-size: 32px;
+  line-height: 1.28;
+}
+
+.feature {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.feature h3 {
+  font-size: 16px;
+  margin-bottom: 2px;
+}
+
+.example-card {
+  background:
+    radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--crema) 18%, transparent), transparent 55%),
+    var(--card);
+}
+
+.example-card h2 {
+  font-size: 17px;
+}
+
+/* ============ 로그인·가입 ============ */
+
+.auth-head {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 8px 0 28px;
+}
+
+.auth-head h1 {
+  margin-top: 8px;
+}
+
+/* ============ 온보딩 ============ */
+
+.onboarding {
+  padding-bottom: calc(110px + env(safe-area-inset-bottom));
+}
+
+.onboard-step {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.onboard-step > h1 {
+  font-size: 24px;
+}
+
+.onboard-step > .muted {
+  margin-bottom: 10px;
+}
+
+.pick-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--ink-3);
+}
+
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.cat-option {
+  --c: var(--ink-3);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 8px;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--line);
+  background: var(--card);
+  text-align: left;
+  transition:
+    border-color 0.2s,
+    background 0.2s,
+    opacity 0.2s;
+}
+
+.cat-option .tiny {
+  grid-column: 2;
+  line-height: 1.35;
+}
+
+.cat-option.selected {
+  border-color: var(--c);
+  background: color-mix(in srgb, var(--c) 14%, var(--card));
+}
+
+.cat-option.negative.selected {
+  border-style: dashed;
+  border-color: var(--bad);
+  background: color-mix(in srgb, var(--bad) 12%, var(--card));
+}
+
+.cat-option.negative.selected strong {
+  text-decoration: line-through;
+  text-decoration-color: var(--bad);
+}
+
+.cat-option:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.wheel-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--c);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 22%, transparent);
+}
+
+/* ============ 원두 카드 ============ */
+
+.bean-grid {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bean-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bean-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.origin-tag {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--crema);
+}
+
+.bean-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+
+.bean-meta .sep {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--ink-3);
+}
+
+.roast-dots {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.roast-dots i {
+  width: 7px;
+  height: 9px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--ink-3) 30%, transparent);
+}
+
+.roast-dots i.on {
+  background: var(--roast);
+  opacity: 1 !important;
+}
+
+.bean-card-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+  color: var(--ink-3);
+}
+
+.bean-card.compact {
+  width: 230px;
+  height: 100%;
+}
+
+.h-scroll {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  margin: 0 calc(var(--gutter) * -1);
+  padding: 4px var(--gutter) 14px;
+  list-style: none;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.h-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.h-scroll li {
+  scroll-snap-align: start;
+}
+
+/* ============ 향미 고르기 ============ */
+
+.picked {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  background: var(--paper-2);
+}
+
+.flavor-wheel {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.wheel-item {
+  --c: var(--ink-3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 2px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--ink-2);
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+
+.wheel-item.active {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--c) 16%, var(--card));
+  box-shadow: inset 0 0 0 1.5px var(--c);
+}
+
+.tag-panel {
+  border-color: color-mix(in srgb, var(--c) 35%, var(--line));
+  background: color-mix(in srgb, var(--c) 5%, var(--card));
+}
+
+.suggest {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--crema);
+  background: color-mix(in srgb, var(--crema-soft) 60%, var(--card));
+}
+
+/* ============ 레이더 ============ */
+
+.radar {
+  margin: 0;
+}
+
+.radar-legend {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+.swatch {
+  width: 16px;
+  height: 0;
+  margin-left: 8px;
+  border-top: 2px solid var(--roast);
+}
+
+.swatch.dashed {
+  border-top: 2px dashed var(--ink-3);
+}
+
+/* ============ 홈 ============ */
+
+.home-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 0 18px;
+}
+
+.home-hero h1 {
+  font-size: 22px;
+}
+
+.home-hero .cup-art {
+  flex: none;
+}
+
+.rec-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rec-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: hidden;
+  animation: page-in 0.4s var(--ease) both;
+}
+
+.rec-card:nth-child(2) {
+  animation-delay: 0.04s;
+}
+
+.rec-card:nth-child(3) {
+  animation-delay: 0.08s;
+}
+
+.rec-main {
+  display: flex;
+  gap: 14px;
+}
+
+.rec-rank {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--crema);
+  min-width: 34px;
+}
+
+.rec-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.explore-ribbon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px 5px 14px;
+  border-bottom-left-radius: var(--radius);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--roast-ink);
+  background: var(--good);
+}
+
+.reasons {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 12px 14px;
+  list-style: none;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--crema-soft) 55%, var(--card));
+}
+
+.reason {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.reason svg {
+  flex: none;
+  margin-top: 3px;
+  color: var(--crema);
+}
+
+.rec-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* ============ 내 취향 ============ */
+
+.taste-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background:
+    radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--crema) 16%, transparent), transparent 60%),
+    var(--card);
+}
+
+.stable-meter {
+  height: 8px;
+  border-radius: 8px;
+  background: var(--paper-2);
+  overflow: hidden;
+}
+
+.stable-meter span {
+  display: block;
+  height: 100%;
+  width: calc(var(--p) * 100%);
+  border-radius: 8px;
+  background: linear-gradient(90deg, var(--crema), var(--roast));
+  transition: width 0.8s var(--ease);
+}
+
+.bar.attr {
+  grid-template-columns: 92px 1fr 64px;
+}
+
+/* ============ 노트 작성 ============ */
+
+.step-head {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  margin: 0 calc(var(--gutter) * -1) 18px;
+  padding: 8px var(--gutter) 10px;
+  background: color-mix(in srgb, var(--paper) 92%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.step-names {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  margin-top: 8px;
+}
+
+.step-names button {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-3);
+}
+
+.step-names button.active {
+  color: var(--roast);
+}
+
+.step-names button:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.step-title {
+  margin-bottom: 6px;
+}
+
+.step-title h2 {
+  font-size: 22px;
+  margin-bottom: 4px;
+}
+
+.draft-notice {
+  margin-bottom: 18px;
+}
+
+.picked-bean {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+  padding: 10px 14px;
+  border-radius: var(--radius-pill);
+  color: var(--roast);
+  background: var(--crema-soft);
+}
+
+.picked-bean .serif {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.pick-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pick-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  border: 1.5px solid var(--line);
+  background: var(--card);
+  text-align: left;
+  color: var(--ink-3);
+  transition:
+    border-color 0.2s,
+    background 0.2s;
+}
+
+.pick-row.selected {
+  border-color: var(--roast);
+  background: color-mix(in srgb, var(--crema-soft) 50%, var(--card));
+  color: var(--roast);
+}
+
+.pick-icon {
+  width: 36px;
+  height: 36px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--roast);
+  background: var(--crema-soft);
+}
+
+.pick-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  color: var(--ink);
+}
+
+.brew-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.recipe-toggle {
+  width: 100%;
+}
+
+.recipe-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.recipe-input > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.with-unit {
+  position: relative;
+}
+
+.with-unit em {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-style: normal;
+  font-size: 13px;
+  color: var(--ink-3);
+}
+
+.with-unit .input {
+  padding-right: 36px;
+}
+
+.rating-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 26px 18px;
+  background:
+    radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--crema) 14%, transparent), transparent 70%),
+    var(--card);
+}
+
+.rating-big {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--roast);
+}
+
+/* ============ 내 노트 ============ */
+
+.note-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.note-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-left: 4px solid var(--accent);
+}
+
+.mini-axes {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  padding: 10px 0 2px;
+}
+
+.mini-axis {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--ink-3);
+}
+
+.mini-dots {
+  display: flex;
+  gap: 2px;
+}
+
+.mini-dots i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--line);
+}
+
+.mini-dots i.on {
+  background: var(--crema);
+}
+
+/* ============ 노트 상세 ============ */
+
+.note-hero {
+  background:
+    radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--crema) 16%, transparent), transparent 55%),
+    var(--card);
+}
+
+.note-bean {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+  color: var(--ink);
+}
+
+.note-bean h1 {
+  font-size: 24px;
+}
+
+.free-flavors {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.free-flavor {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--ink-2);
+}
+
+.memo {
+  white-space: pre-wrap;
+  line-height: 1.75;
+  font-family: var(--font-serif);
+}
+
+/* ============ 원두 찾기 ============ */
+
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 14px 0 12px;
+}
+
+.chip-sep {
+  flex: none;
+  width: 1px;
+  margin: 4px 2px;
+  background: var(--line-strong);
+}
+
+/* ============ 원두 상세 ============ */
+
+.bean-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background:
+    radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--crema) 20%, transparent), transparent 55%),
+    var(--card);
+}
+
+.bean-hero h1 {
+  font-size: 25px;
+  margin-top: 4px;
+}
+
+/* ============ 원두 등록 ============ */
+
+.dup-box {
+  border-style: dashed;
+  border-color: color-mix(in srgb, var(--crema) 60%, var(--line));
+  background: color-mix(in srgb, var(--crema-soft) 45%, var(--card));
+}
+
+.dup-box p {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  color: var(--ink-2);
+}
+
+.dup-box ul {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.roast-scale {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.roast-scale button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 2px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--line);
+  background: var(--card);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--ink-2);
+}
+
+.roast-scale button.active {
+  border-color: var(--roast);
+  color: var(--roast);
+  background: color-mix(in srgb, var(--crema-soft) 55%, var(--card));
+}

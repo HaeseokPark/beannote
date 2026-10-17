@@ -1,0 +1,101 @@
+/*
+ * Beanote 디자인 토큰 — "카페의 시음 노트"
+ * 크림색 종이 위에 에스프레소 잉크, 크레마 골드 포인트. 다크 모드는 에스프레소 톤.
+ */
+:root {
+  /* 바탕 */
+  --paper: #f7f0e6;
+  --paper-2: #efe4d4;
+  --card: #fffbf5;
+  --foam: #fff7ec;
+
+  /* 글씨 */
+  --ink: #2a1b13;
+  --ink-2: #5c4537;
+  --ink-3: #8f7969;
+  --line: #e7d8c4;
+  --line-strong: #d6c1a6;
+
+  /* 포인트 */
+  --roast: #6e3b20;
+  --roast-deep: #4a2615;
+  --roast-ink: #fff7ec;
+  --crema: #c98d4b;
+  --crema-soft: #f3e2c9;
+  --good: #4e7b56;
+  --bad: #a9473a;
+
+  /* 향미 대분류 색 */
+  --flavor-floral: #d4809a;
+  --flavor-berry: #8b5a9e;
+  --flavor-citrus: #d9ab27;
+  --flavor-stone-tropical: #e5824f;
+  --flavor-sweet: #c48a45;
+  --flavor-nutty-cocoa: #7a4c30;
+  --flavor-spice: #b4523a;
+  --flavor-roasted: #5d493b;
+  --flavor-fermented: #8c2f47;
+  --flavor-green: #6a9461;
+
+  /* 글꼴 */
+  --font-serif: 'Gowun Batang', 'Nanum Myeongjo', serif;
+  --font-sans: 'Pretendard Variable', Pretendard, system-ui, -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic',
+    sans-serif;
+
+  /* 모양 */
+  --radius-sm: 10px;
+  --radius: 16px;
+  --radius-lg: 24px;
+  --radius-pill: 999px;
+  --shadow-sm: 0 1px 2px rgb(74 38 21 / 6%);
+  --shadow: 0 1px 2px rgb(74 38 21 / 5%), 0 10px 28px -12px rgb(74 38 21 / 22%);
+  --shadow-lg: 0 2px 6px rgb(74 38 21 / 6%), 0 22px 48px -18px rgb(74 38 21 / 35%);
+
+  /* 레이아웃 */
+  --max-width: 480px;
+  --gutter: 20px;
+  --tab-height: 68px;
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #16100c;
+    --paper-2: #1e1611;
+    --card: #231a14;
+    --foam: #2a1f18;
+
+    --ink: #f4e9dc;
+    --ink-2: #d2bfac;
+    --ink-3: #9e8a79;
+    --line: #382a20;
+    --line-strong: #4a382b;
+
+    --roast: #d9a066;
+    --roast-deep: #f0c48f;
+    --roast-ink: #1d140f;
+    --crema: #e3aa6b;
+    --crema-soft: #3a2a1c;
+    --good: #8fbf91;
+    --bad: #e48a7a;
+
+    --flavor-floral: #e79cb3;
+    --flavor-berry: #b88bd0;
+    --flavor-citrus: #ecc55a;
+    --flavor-stone-tropical: #f29a6c;
+    --flavor-sweet: #e0a866;
+    --flavor-nutty-cocoa: #c08c69;
+    --flavor-spice: #e07a5f;
+    --flavor-roasted: #b49c88;
+    --flavor-fermented: #d56f88;
+    --flavor-green: #9dc490;
+
+    --shadow-sm: 0 1px 2px rgb(0 0 0 / 30%);
+    --shadow: 0 1px 2px rgb(0 0 0 / 30%), 0 12px 30px -14px rgb(0 0 0 / 60%);
+    --shadow-lg: 0 2px 8px rgb(0 0 0 / 35%), 0 24px 50px -18px rgb(0 0 0 / 70%);
+
+    color-scheme: dark;
+  }
+}

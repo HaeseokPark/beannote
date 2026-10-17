@@ -87,6 +87,8 @@ class RecommendationScorerTest {
 
 		assertThat(why).hasSize(2);
 		assertThat(why).extracting(Reason::type).doesNotHaveDuplicates();
+		// 향미 근거가 있으면 둘 중 하나는 향미 이유다
+		assertThat(why).extracting(Reason::type).contains(Reason.Type.FLAVOR);
 		assertThat(why).extracting(Reason::text).containsAnyOf(
 				"좋아하시는 밝은 산미가 특징이에요",
 				"높게 평가하신 커피들처럼 베리 향이 있어요",

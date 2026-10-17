@@ -78,6 +78,18 @@ public class ReasonGenerator {
 		options.sort(Comparator.comparingDouble(Scored::value).reversed());
 		List<Reason> picked = new ArrayList<>();
 		Set<Reason.Type> types = EnumSet.noneOf(Reason.Type.class);
+		// 향미 이유는 사용자가 가장 와닿아하는 근거라서, 1순위가 향미가 아니면 2번째 자리에 향미 이유를 먼저 넣는다
+		if (!options.isEmpty()) {
+			picked.add(options.getFirst().reason());
+			types.add(options.getFirst().reason().type());
+			options.stream()
+					.filter(o -> o.reason().type() == Reason.Type.FLAVOR && !types.contains(Reason.Type.FLAVOR))
+					.findFirst()
+					.ifPresent(o -> {
+						picked.add(o.reason());
+						types.add(Reason.Type.FLAVOR);
+					});
+		}
 		for (Scored option : options) {
 			if (picked.size() >= MAX_REASONS) {
 				break;

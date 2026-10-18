@@ -69,8 +69,8 @@ class RecommendationScorerTest {
 				RoastLevel.LIGHT);
 
 		ScoredCandidate noHistory = scorer.score(anaerobicKenya, user(Set.of()));
-		ScoredCandidate withHistory = scorer.score(anaerobicKenya, new UserContext(TASTE, Set.of("ET"),
-				Set.of(ProcessMethod.WASHED), Set.of(), Map.of(), false));
+		ScoredCandidate withHistory = scorer.score(anaerobicKenya, UserContext.withoutCollab(TASTE, Set.of("ET"),
+				Set.of(ProcessMethod.WASHED), Set.of(), false));
 
 		assertThat(noHistory.explore()).isZero();
 		assertThat(withHistory.explore()).isEqualTo(1.0);
@@ -99,7 +99,7 @@ class RecommendationScorerTest {
 	void 설문_기반이면_설문_문구를_쓴다() {
 		Candidate bean = candidate(1, vector(0, Map.of("BERRY", 1.0), 0, ProcessMethod.WASHED));
 		double[] berryOnly = vector(0, Map.of("BERRY", 1.0), 0, null);
-		UserContext survey = new UserContext(berryOnly, Set.of(), Set.of(), Set.of(), Map.of(), true);
+		UserContext survey = UserContext.withoutCollab(berryOnly, Set.of(), Set.of(), Set.of(), true);
 
 		assertThat(reasons.generate(scorer.score(bean, survey), survey))
 				.extracting(Reason::text).contains("좋아한다고 고르신 베리 향이 있어요");
@@ -110,8 +110,8 @@ class RecommendationScorerTest {
 		Candidate bean = new Candidate(1, TASTE.clone(), Set.of("KE"), "KE", ProcessMethod.ANAEROBIC,
 				RoastLevel.LIGHT);
 		// 탐험 가점이 크게 보이도록 취향 벡터와 거의 무관한 상황을 만든다
-		UserContext ctx = new UserContext(vector(0, Map.of("FLORAL", 1.0), 0, null), Set.of("ET"),
-				Set.of(ProcessMethod.WASHED), Set.of(), Map.of(), false);
+		UserContext ctx = UserContext.withoutCollab(vector(0, Map.of("FLORAL", 1.0), 0, null), Set.of("ET"),
+				Set.of(ProcessMethod.WASHED), Set.of(), false);
 
 		assertThat(reasons.generate(scorer.score(bean, ctx), ctx)).extracting(Reason::text)
 				.contains("아직 안 마셔 본 무산소 가공이에요");
@@ -127,7 +127,7 @@ class RecommendationScorerTest {
 	}
 
 	private static UserContext user(Set<String> disliked) {
-		return new UserContext(TASTE, Set.of(), Set.of(), disliked, Map.of(), false);
+		return UserContext.withoutCollab(TASTE, Set.of(), Set.of(), disliked, false);
 	}
 
 	private static Candidate candidate(long id, double[] vector, ProcessMethod process) {

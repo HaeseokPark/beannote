@@ -20,6 +20,9 @@ import com.beanote.recommendation.dto.RecommendationResponse;
 import com.beanote.recommendation.dto.RecommendationResponse.Item;
 import com.beanote.recommendation.dto.RecommendationResponse.SimilarBean;
 import com.beanote.recommendation.model.Candidate;
+import com.beanote.recommendation.model.CollabScorer;
+import com.beanote.recommendation.model.CollabSignal;
+import com.beanote.recommendation.model.Neighbor;
 import com.beanote.recommendation.model.Reason;
 import com.beanote.recommendation.model.ReasonGenerator;
 import com.beanote.recommendation.model.RecommendationScorer;
@@ -78,11 +81,11 @@ public class RecommendationService {
 		if (taste.vector() == null) {
 			return popular(taste, excluded);
 		}
+		Collab collab = collabFor(userId);
 
 		TriedAttributes tried = queries.triedAttributes(userId);
-		// 협업 점수는 Phase 7 에서 이웃 배치와 함께 채운다. 사용자가 collabMinUsers 명 미만이면 쓰지 않는다
 		UserContext context = new UserContext(taste.vector(), tried.origins(), tried.processes(),
-				queries.dislikedCategories(userId), Map.of(), taste.notesWeight() < 0.5);
+				queries.dislikedCategories(userId), collab.signals(), collab.enabled(), taste.notesWeight() < 0.5);
 
 		List<Candidate> candidates = queries.loadCandidates().stream()
 				.filter(c -> !excluded.contains(c.beanId()))
@@ -132,6 +135,25 @@ public class RecommendationService {
 						false))
 				.toList();
 		return new RecommendationResponse(taste.confidence(), taste.noteCount(), true, items);
+	}
+
+	/**
+	 * 협업 점수 (5-3). 사용자가 collabMinUsers 명 미만이거나 아직 이웃이 계산되지 않았으면 쓰지 않는다.
+	 */
+	private Collab collabFor(Long userId) {
+		if (queries.activeUserCount() < properties.collabMinUsers()) {
+			return Collab.DISABLED;
+		}
+		List<Neighbor> neighbors = queries.neighbors(userId);
+		if (neighbors.isEmpty()) {
+			return Collab.DISABLED;
+		}
+		Map<Long, Map<Long, Double>> ratings = queries.ratingsByUser(neighbors.stream().map(Neighbor::userId).toList());
+		return new Collab(true, CollabScorer.score(neighbors, ratings));
+	}
+
+	private record Collab(boolean enabled, Map<Long, CollabSignal> signals) {
+		static final Collab DISABLED = new Collab(false, Map.of());
 	}
 
 	private Map<String, String> categoryNames() {

@@ -15,7 +15,7 @@ import com.beanote.taste.model.VectorLayout;
  * score = α × contentSim + β × collabScore + γ × explore − 싫어하는 향 비율 × penalty
  *
  * contentSim  = (가중 코사인 + 1) / 2          → 0 ~ 1
- * collabScore = 이웃이 준 보정 평점을 0~1 로 옮긴 값 (Phase 7, 그 전에는 0)
+ * collabScore = 이웃이 준 보정 평점을 0~1 로 옮긴 값 (CollabScorer). 사용자가 적으면 0, 평가 없는 원두는 0.5
  * explore     = 0.5 × (새 원산지) + 0.5 × (새 가공 방식)  → 0 ~ 1. 노트가 없으면 0
  * 싫어하는 향 비율 = 원두 향미 구간에서 싫어하는 대분류가 차지하는 비율 (0 ~ 1)
  * </pre>
@@ -57,13 +57,15 @@ public class RecommendationScorer {
 				&& !user.triedProcesses().contains(candidate.process());
 		double explore = (newOrigin ? 0.5 : 0) + (newProcess ? 0.5 : 0);
 
-		double collab = user.collabScores().getOrDefault(candidate.beanId(), 0.0);
+		// 협업을 쓰지 않으면 0, 쓰는데 이웃이 평가하지 않은 원두는 중립값
+		CollabSignal signal = user.collabEnabled() ? user.collab().get(candidate.beanId()) : null;
+		double collab = !user.collabEnabled() ? 0 : signal == null ? CollabSignal.NEUTRAL : signal.score();
 		double penalty = dislikedRatio(candidate.vector(), user) * weights.dislikePenalty();
 
 		double score = weights.content() * contentSim + weights.collab() * collab + weights.explore() * explore
 				- penalty;
-		return new ScoredCandidate(candidate, score, contentSim, collab, explore, penalty, contributions, newOrigin,
-				newProcess);
+		return new ScoredCandidate(candidate, score, contentSim, collab, signal, explore, penalty, contributions,
+				newOrigin, newProcess);
 	}
 
 	private static double dislikedRatio(double[] vector, UserContext user) {

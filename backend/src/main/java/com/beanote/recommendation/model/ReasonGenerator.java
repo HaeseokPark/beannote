@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,6 +25,8 @@ import com.beanote.taste.model.VectorLayout;
 public class ReasonGenerator {
 
 	private static final int MAX_REASONS = 2;
+	/** 이웃 평가를 이유로 보여 줄 최소 협업 점수 (이웃 평균보다 0.4점 이상 높게) */
+	private static final double COLLAB_REASON_MIN = 0.6;
 
 	/** 맛 축별 문구: [높을 때, 낮을 때] */
 	private static final Map<String, String[]> AXIS_PHRASES = Map.of(
@@ -70,9 +73,12 @@ public class ReasonGenerator {
 			options.add(new Scored(new Reason(Reason.Type.EXPLORE, "아직 안 마셔 본 " + origin + " 원두예요"),
 					weights.explore() * 0.5));
 		}
-		if (scored.collab() > 0) {
-			options.add(new Scored(new Reason(Reason.Type.COLLAB, "취향이 비슷한 분들이 높게 평가했어요"),
-					weights.collab() * scored.collab()));
+		CollabSignal collab = scored.collabSignal();
+		if (collab != null && collab.score() >= COLLAB_REASON_MIN && collab.raters() >= 2) {
+			// 중립(0.5)보다 높은 만큼이 실제로 점수를 끌어올린 양이다
+			options.add(new Scored(new Reason(Reason.Type.COLLAB,
+					String.format(Locale.ROOT, "취향이 비슷한 분들이 평균 %.1f점을 줬어요", collab.avgRating())),
+					weights.collab() * (collab.score() - CollabSignal.NEUTRAL)));
 		}
 
 		options.sort(Comparator.comparingDouble(Scored::value).reversed());

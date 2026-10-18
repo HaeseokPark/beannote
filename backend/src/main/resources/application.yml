@@ -55,6 +55,8 @@ beanote:
       explore: 0.10
       dislike-penalty: 0.3
     collab-min-users: 50      # 사용자 50명 미만이면 협업 점수(β) 사용 안 함
+    neighbor-count: 20        # 협업 이웃: 취향 벡터가 가까운 상위 20명
+    neighbor-cron: "0 0 4 * * *"   # 이웃 재계산: 매일 새벽 4시 (한국 시간)
     cache-ttl: 30m
     size: 10                  # 추천 개수
     similar-size: 5           # 비슷한 원두 개수

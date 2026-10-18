@@ -20,6 +20,8 @@ import com.beanote.taste.model.SectionWeights;
  * @param surveyMinNotes     이 수 미만이면 설문 벡터만 쓴다
  * @param stableNotes        이 수 이상이면 노트 벡터만 쓴다
  * @param collabMinUsers     사용자가 이 수 미만이면 협업 점수를 쓰지 않는다
+ * @param neighborCount      협업 이웃 수 (취향이 가까운 상위 N명)
+ * @param neighborCron       이웃 재계산 배치 시각
  * @param roastTaste         로스팅별 기본 맛 축 추정 (산미, 단맛, 바디, 쓴맛, 여운)
  * @param processTasteAdjust 가공 방식별 맛 축 보정값
  * @param habitRoast         평소 마시는 커피 → 추정 선호 로스팅
@@ -33,6 +35,8 @@ public record RecommendationProperties(
 		SectionWeights sectionWeights,
 		ScoreWeights scoreWeights,
 		int collabMinUsers,
+		int neighborCount,
+		String neighborCron,
 		Duration cacheTtl,
 		int size,
 		int similarSize,

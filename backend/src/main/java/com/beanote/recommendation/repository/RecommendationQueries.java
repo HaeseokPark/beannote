@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 import com.beanote.bean.domain.ProcessMethod;
 import com.beanote.bean.domain.RoastLevel;
 import com.beanote.recommendation.model.Candidate;
+import com.beanote.recommendation.model.Neighbor;
 import com.beanote.taste.model.VectorCodec;
 
 /**
@@ -102,6 +103,35 @@ public class RecommendationQueries {
 				ORDER BY COALESCE(s.note_count, 0) DESC, COALESCE(s.avg_rating, 0) DESC, b.id DESC
 				LIMIT :limit
 				""", params, Long.class);
+	}
+
+	public int activeUserCount() {
+		Integer count = jdbc.queryForObject("SELECT COUNT(*) FROM users WHERE deleted_at IS NULL", Map.of(),
+				Integer.class);
+		return count == null ? 0 : count;
+	}
+
+	/** 배치가 계산해 둔 이웃 */
+	public List<Neighbor> neighbors(long userId) {
+		return jdbc.query("""
+				SELECT neighbor_id, similarity FROM user_neighbors WHERE user_id = :userId ORDER BY similarity DESC
+				""", Map.of("userId", userId),
+				(rs, i) -> new Neighbor(rs.getLong("neighbor_id"), rs.getDouble("similarity")));
+	}
+
+	/** 사용자별 원두 → 별점 (협업 점수 계산용, 사용자 평균을 내려고 노트 전체를 읽는다) */
+	public Map<Long, Map<Long, Double>> ratingsByUser(Collection<Long> userIds) {
+		Map<Long, Map<Long, Double>> result = new HashMap<>();
+		if (userIds.isEmpty()) {
+			return result;
+		}
+		jdbc.query("SELECT user_id, bean_id, rating FROM tasting_notes WHERE user_id IN (:ids)",
+				Map.of("ids", userIds), rs -> {
+					// 같은 원두를 여러 번 마셨으면 마지막 평점
+					result.computeIfAbsent(rs.getLong("user_id"), k -> new HashMap<>())
+							.put(rs.getLong("bean_id"), rs.getDouble("rating"));
+				});
+		return result;
 	}
 
 	public record TriedAttributes(Set<String> origins, Set<ProcessMethod> processes) {
